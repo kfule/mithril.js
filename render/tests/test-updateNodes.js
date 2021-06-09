@@ -5,7 +5,6 @@ var components = require("../../test-utils/components")
 var domMock = require("../../test-utils/domMock")
 var vdom = require("../../render/render")
 var m = require("../../render/hyperscript")
-var fragment = require("../../render/fragment")
 var trust = require("../../render/trust")
 
 function vnodify(str) {
@@ -88,8 +87,8 @@ o.spec("updateNodes", function() {
 		o(updated.dom).equals(root.childNodes[0])
 	})
 	o("handles fragment noop", function() {
-		var vnodes = fragment(m("a"))
-		var updated = fragment(m("a"))
+		var vnodes = m("[", m("a"))
+		var updated = m("[", m("a"))
 
 		render(root, vnodes)
 		render(root, updated)
@@ -99,8 +98,8 @@ o.spec("updateNodes", function() {
 		o(updated.dom).equals(root.childNodes[0])
 	})
 	o("handles fragment noop w/ text child", function() {
-		var vnodes = fragment("a")
-		var updated = fragment("a")
+		var vnodes = m("[", "a")
+		var updated = m("[", "a")
 
 		render(root, vnodes)
 		render(root, updated)
@@ -284,8 +283,8 @@ o.spec("updateNodes", function() {
 		o(updated[2].dom).equals(root.childNodes[2])
 	})
 	o("adds to empty fragment followed by el", function() {
-		var vnodes = [fragment({key: 1}), m("b", {key: 2})]
-		var updated = [fragment({key: 1}, m("a")), m("b", {key: 2})]
+		var vnodes = [m("[", {key: 1}), m("b", {key: 2})]
+		var updated = [m("[", {key: 1}, m("a")), m("b", {key: 2})]
 
 		render(root, vnodes)
 		render(root, updated)
@@ -297,8 +296,8 @@ o.spec("updateNodes", function() {
 		o(updated[1].dom).equals(root.childNodes[1])
 	})
 	o("reverses followed by el", function() {
-		var vnodes = [fragment({key: 1}, m("a", {key: 2}), m("b", {key: 3})), m("i", {key: 4})]
-		var updated = [fragment({key: 1}, m("b", {key: 3}), m("a", {key: 2})), m("i", {key: 4})]
+		var vnodes = [m("[", {key: 1}, m("a", {key: 2}), m("b", {key: 3})), m("i", {key: 4})]
+		var updated = [m("[", {key: 1}, m("b", {key: 3}), m("a", {key: 2})), m("i", {key: 4})]
 
 		render(root, vnodes)
 		render(root, updated)
@@ -312,7 +311,7 @@ o.spec("updateNodes", function() {
 		o(updated[1].dom).equals(root.childNodes[2])
 	})
 	o("updates empty fragment to html without key", function() {
-		var vnodes = fragment()
+		var vnodes = m("[")
 		var updated = trust("<a></a><b></b>")
 
 		render(root, vnodes)
@@ -327,7 +326,7 @@ o.spec("updateNodes", function() {
 	})
 	o("updates empty html to fragment without key", function() {
 		var vnodes = trust()
-		var updated = fragment(m("a"), m("b"))
+		var updated = m("[", m("a"), m("b"))
 
 		render(root, vnodes)
 		render(root, updated)
@@ -340,7 +339,7 @@ o.spec("updateNodes", function() {
 		o(updated.dom.nextSibling).equals(root.childNodes[1])
 	})
 	o("updates fragment to html without key", function() {
-		var vnodes = fragment(m("a"), m("b"))
+		var vnodes = m("[", m("a"), m("b"))
 		var updated = trust("<i></i><s></s>")
 
 		render(root, vnodes)
@@ -355,7 +354,7 @@ o.spec("updateNodes", function() {
 	})
 	o("updates html to fragment without key", function() {
 		var vnodes = trust("<a></a><b></b>")
-		var updated = fragment(m("i"), m("s"))
+		var updated = m("[", m("i"), m("s"))
 
 		render(root, vnodes)
 		render(root, updated)
@@ -368,8 +367,8 @@ o.spec("updateNodes", function() {
 		o(updated.dom.nextSibling).equals(root.childNodes[1])
 	})
 	o("populates fragment followed by el keyed", function() {
-		var vnodes = [fragment({key: 1}), m("i", {key: 2})]
-		var updated = [fragment({key: 1}, m("a"), m("b")), m("i", {key: 2})]
+		var vnodes = [m("[", {key: 1}), m("i", {key: 2})]
+		var updated = [m("[", {key: 1}, m("a"), m("b")), m("i", {key: 2})]
 
 		render(root, vnodes)
 		render(root, updated)
@@ -384,20 +383,20 @@ o.spec("updateNodes", function() {
 		o(updated[1].dom).equals(root.childNodes[2])
 	})
 	o("throws if fragment followed by null then el on first render keyed", function() {
-		var vnodes = [fragment({key: 1}), null, m("i", {key: 2})]
+		var vnodes = [m("[", {key: 1}), null, m("i", {key: 2})]
 
 		o(function () { render(root, vnodes) }).throws(TypeError)
 	})
 	o("throws if fragment followed by null then el on next render keyed", function() {
-		var vnodes = [fragment({key: 1}), m("i", {key: 2})]
-		var updated = [fragment({key: 1}, m("a"), m("b")), null, m("i", {key: 2})]
+		var vnodes = [m("[", {key: 1}), m("i", {key: 2})]
+		var updated = [m("[", {key: 1}, m("a"), m("b")), null, m("i", {key: 2})]
 
 		render(root, vnodes)
 		o(function () { render(root, updated) }).throws(TypeError)
 	})
 	o("populates childless fragment replaced followed by el keyed", function() {
-		var vnodes = [fragment({key: 1}), m("i", {key: 2})]
-		var updated = [fragment({key: 1}, m("a"), m("b")), m("i", {key: 2})]
+		var vnodes = [m("[", {key: 1}), m("i", {key: 2})]
+		var updated = [m("[", {key: 1}, m("a"), m("b")), m("i", {key: 2})]
 
 		render(root, vnodes)
 		render(root, updated)
@@ -412,8 +411,8 @@ o.spec("updateNodes", function() {
 		o(updated[1].dom).equals(root.childNodes[2])
 	})
 	o("throws if childless fragment replaced followed by null then el keyed", function() {
-		var vnodes = [fragment({key: 1}), m("i", {key: 2})]
-		var updated = [fragment({key: 1}, m("a"), m("b")), null, m("i", {key: 2})]
+		var vnodes = [m("[", {key: 1}), m("i", {key: 2})]
+		var updated = [m("[", {key: 1}, m("a"), m("b")), null, m("i", {key: 2})]
 
 		render(root, vnodes)
 		o(function () { render(root, updated) }).throws(TypeError)
@@ -697,7 +696,7 @@ o.spec("updateNodes", function() {
 			m("#", "a")
 		)
 		var updated = m("div",
-			fragment(m("#", "b")),
+			m("[", m("#", "b")),
 			undefined,
 			undefined
 		)
@@ -796,9 +795,9 @@ o.spec("updateNodes", function() {
 		o(root.childNodes[1].nodeName).equals("B")
 	})
 	o("mixed unkeyed vnode types are not broken by recycle", function() {
-		var vnodes = [fragment(m("a")), m("b")]
+		var vnodes = [m("[", m("a")), m("b")]
 		var temp = [m("b")]
-		var updated = [fragment(m("a")), m("b")]
+		var updated = [m("[", m("a")), m("b")]
 
 		render(root, vnodes)
 		render(root, temp)
@@ -946,38 +945,38 @@ o.spec("updateNodes", function() {
 	})
 	o("don't add back elements from fragments that are restored from the pool #1991", function() {
 		render(root, [
-			fragment(),
-			fragment()
+			m("["),
+			m("[")
 		])
 		render(root, [
-			fragment(),
-			fragment(
+			m("["),
+			m("[",
 				m("div")
 			)
 		])
 		render(root, [
-			fragment(null)
+			m("[", null)
 		])
 		render(root, [
-			fragment(),
-			fragment()
+			m("["),
+			m("[")
 		])
 
 		o(root.childNodes.length).equals(0)
 	})
 	o("don't add back elements from fragments that are being removed #1991", function() {
 		render(root, [
-			fragment(),
+			m("["),
 			m("p"),
 		])
 		render(root, [
-			fragment(
+			m("[",
 				m("div", 5)
 			)
 		])
 		render(root, [
-			fragment(),
-			fragment()
+			m("["),
+			m("[")
 		])
 
 		o(root.childNodes.length).equals(0)
@@ -1021,9 +1020,9 @@ o.spec("updateNodes", function() {
 		}
 	})
 	o("don't fetch the nextSibling from the pool", function() {
-		render(root, [fragment(m("div", {key: 1}), m("div", {key: 2})), m("p")])
-		render(root, [fragment(), m("p")])
-		render(root, [fragment(m("div", {key: 2}), m("div", {key: 1})), m("p")])
+		render(root, [m("[", m("div", {key: 1}), m("div", {key: 2})), m("p")])
+		render(root, [m("["), m("p")])
+		render(root, [m("[", m("div", {key: 2}), m("div", {key: 1})), m("p")])
 
 		o([].map.call(root.childNodes, function(el) {return el.nodeName})).deepEquals(["DIV", "DIV", "P"])
 	})
@@ -1172,9 +1171,9 @@ o.spec("updateNodes", function() {
 
 			o("fragment child toggles from null when followed by null component then tag", function() {
 				var component = createComponent({view: function() {return null}})
-				var vnodes = [fragment(m("a"), m(component), m("b"))]
-				var temp = [fragment(null, m(component), m("b"))]
-				var updated = [fragment(m("a"), m(component), m("b"))]
+				var vnodes = [m("[", m("a"), m(component), m("b"))]
+				var temp = [m("[", null, m(component), m("b"))]
+				var updated = [m("[", m("a"), m(component), m("b"))]
 
 				render(root, vnodes)
 				render(root, temp)
@@ -1188,9 +1187,9 @@ o.spec("updateNodes", function() {
 				var flag = true
 				var a = createComponent({view: function() {return flag ? m("a") : null}})
 				var b = createComponent({view: function() {return null}})
-				var vnodes = [fragment(m(a), m(b), m("s"))]
-				var temp = [fragment(m(a), m(b), m("s"))]
-				var updated = [fragment(m(a), m(b), m("s"))]
+				var vnodes = [m("[", m(a), m(b), m("s"))]
+				var temp = [m("[", m(a), m(b), m("s"))]
+				var updated = [m("[", m(a), m(b), m("s"))]
 
 				render(root, vnodes)
 				flag = false
@@ -1204,7 +1203,7 @@ o.spec("updateNodes", function() {
 			})
 			o("removing a component that returns a fragment doesn't throw (regression test for incidental bug introduced while debugging some Flems)", function() {
 				var component = createComponent({
-					view: function() {return fragment(m("a"), m("b"))}
+					view: function() {return m("[", m("a"), m("b"))}
 				})
 				try {
 					render(root, [m(component)])
