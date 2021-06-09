@@ -146,6 +146,8 @@ module.exports = async (input) => {
 			}
 		}
 
+		// strings with the same name as a variable declaration or function definition will be mangled.
+
 		// fix strings that got mangled by collision disambiguation
 		const string = /(["'])((?:\\\1|.)*?)(\1)/g
 		const candidates = Array.from(bindings, ([binding, count]) => escapeRegExp(binding) + (count - 1)).join("|")
@@ -155,7 +157,15 @@ module.exports = async (input) => {
 			return open + fixed + close
 		})
 
-		//fix props
+		// fix regex literals
+		// FIXME this regex is very very adhoc...
+		const maybeRegexLiteral =  /([^^\/\w\n<"']\/)([^\/\n*][^\n]+)(\/[gimsuy]*)/g
+		code = code.replace(maybeRegexLiteral, (match, open, data, close) => {
+			const fixed = data.replace(variables, (match) => match.replace(/\d+$/, ""))
+			return open + fixed + close
+		})
+
+		// fix props
 		const props = new RegExp(`((?:[^:]\\/\\/.*)?\\.\\s*)(${candidates})|([\\{,]\\s*)(${candidates})(\\s*:)`, "gm")
 		code = code.replace(props, (match, dot, a, pre, b, post) => {
 			// Don't do anything because dot was matched in a comment
