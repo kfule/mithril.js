@@ -4,8 +4,6 @@ var buildPathname = require("../pathname/build")
 var hasOwn = require("../util/hasOwn")
 
 module.exports = function($window, Promise, oncompletion) {
-	var callbackCount = 0
-
 	function PromiseProxy(executor) {
 		return new Promise(executor)
 	}

@@ -159,7 +159,7 @@ module.exports = async (input) => {
 
 		// fix regex literals
 		// FIXME this regex is very very adhoc...
-		const maybeRegexLiteral =  /([^^\/\w\n<"']\/)([^\/\n*][^\n]+)(\/[gimsuy]*)/g
+		const maybeRegexLiteral = /([^^\/\w\n<"']\/)([^\/\n*][^\n]+)(\/[gimsuy]*)/g
 		code = code.replace(maybeRegexLiteral, (match, open, data, close) => {
 			const fixed = data.replace(variables, (match) => match.replace(/\d+$/, ""))
 			return open + fixed + close
