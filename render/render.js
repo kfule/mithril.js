@@ -145,7 +145,7 @@ module.exports = function($window) {
 			if (sentinel.$$reentrantLock$$ != null) return
 			sentinel.$$reentrantLock$$ = true
 		} else {
-			vnode.state = void 0
+			vnode.state = undefined
 			sentinel = vnode.tag
 			if (sentinel.$$reentrantLock$$ != null) return
 			sentinel.$$reentrantLock$$ = true
