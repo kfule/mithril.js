@@ -132,6 +132,11 @@ module.exports = function($window) {
 			}
 		}
 	}
+	function callView(vnode) {
+		var instance = callHook.call(vnode.state.view, vnode)
+		if (instance === vnode) throw Error("A view cannot return the vnode it received as argument")
+		return Vnode.normalize(Array.isArray(instance) ? instance : [instance])
+	}
 	function initComponent(vnode, hooks) {
 		var sentinel
 		if (typeof vnode.tag.view === "function") {
@@ -148,8 +153,7 @@ module.exports = function($window) {
 		}
 		initLifecycle(vnode.state, vnode, hooks)
 		if (vnode.attrs != null) initLifecycle(vnode.attrs, vnode, hooks)
-		vnode.instance = Vnode.normalize(callHook.call(vnode.state.view, vnode))
-		if (vnode.instance === vnode) throw Error("A view cannot return the vnode it received as argument")
+		vnode.instance = callView(vnode)
 		sentinel.$$reentrantLock$$ = null
 	}
 	function createComponent(parent, vnode, hooks, ns, nextSibling) {
@@ -459,8 +463,7 @@ module.exports = function($window) {
 		}
 	}
 	function updateComponent(parent, old, vnode, hooks, nextSibling, ns) {
-		vnode.instance = Vnode.normalize(callHook.call(vnode.state.view, vnode))
-		if (vnode.instance === vnode) throw Error("A view cannot return the vnode it received as argument")
+		vnode.instance = callView(vnode)
 		updateLifecycle(vnode.state, vnode, hooks)
 		if (vnode.attrs != null) updateLifecycle(vnode.attrs, vnode, hooks)
 		if (vnode.instance != null) {
