@@ -353,9 +353,17 @@ module.exports = function($window) {
 				else {
 					// inspired by ivi https://github.com/ivijs/ivi/ by Boris Kaul
 					var originalNextSibling = nextSibling, vnodesLength = end - start + 1, oldIndices = new Array(vnodesLength), li=0, i=0, pos = 2147483647, matched = 0, map, lisIndices
-					for (i = 0; i < vnodesLength; i++) oldIndices[i] = -1
+
+					map = Object.create(null)
+					for (i = oldStart; i <= oldEnd; i++) {
+						o = old[i]
+						if (o != null) {
+							var key = o.key
+							if (key != null) map[key] = i
+						}
+					}
+
 					for (i = end; i >= start; i--) {
-						if (map == null) map = getKeyMap(old, oldStart, oldEnd + 1)
 						ve = vnodes[i]
 						var oldIndex = map[ve.key]
 						if (oldIndex != null) {
@@ -366,32 +374,32 @@ module.exports = function($window) {
 							if (oe !== ve) updateNode(parent, oe, ve, hooks, nextSibling, ns)
 							if (ve.dom != null) nextSibling = ve.dom
 							matched++
+						} else {
+							oldIndices[i-start] = -1
 						}
 					}
 					nextSibling = originalNextSibling
 					if (matched !== oldEnd - oldStart + 1) removeNodes(parent, old, oldStart, oldEnd + 1)
 					if (matched === 0) createNodes(parent, vnodes, start, end + 1, hooks, nextSibling, ns)
-					else {
-						if (pos === -1) {
-							// the indices of the indices of the items that are part of the
-							// longest increasing subsequence in the oldIndices list
-							lisIndices = makeLisIndices(oldIndices)
-							li = lisIndices.length - 1
-							for (i = end; i >= start; i--) {
-								v = vnodes[i]
-								if (oldIndices[i-start] === -1) createNode(parent, v, hooks, ns, nextSibling)
-								else {
-									if (lisIndices[li] === i - start) li--
-									else moveNodes(parent, v, nextSibling)
-								}
-								if (v.dom != null) nextSibling = vnodes[i].dom
+					else if (pos !== -1) {
+						for (i = end; i >= start; i--) {
+							v = vnodes[i]
+							if (oldIndices[i-start] === -1) createNode(parent, v, hooks, ns, nextSibling)
+							if (v.dom != null) nextSibling = vnodes[i].dom
+						}
+					} else {
+						// the indices of the indices of the items that are part of the
+						// longest increasing subsequence in the oldIndices list
+						lisIndices = makeLisIndices(oldIndices)
+						li = lisIndices.length - 1
+						for (i = end; i >= start; i--) {
+							v = vnodes[i]
+							if (oldIndices[i-start] === -1) createNode(parent, v, hooks, ns, nextSibling)
+							else {
+								if (lisIndices[li] === i - start) li--
+								else moveNodes(parent, v, nextSibling)
 							}
-						} else {
-							for (i = end; i >= start; i--) {
-								v = vnodes[i]
-								if (oldIndices[i-start] === -1) createNode(parent, v, hooks, ns, nextSibling)
-								if (v.dom != null) nextSibling = vnodes[i].dom
-							}
+							if (v.dom != null) nextSibling = vnodes[i].dom
 						}
 					}
 				}
@@ -497,29 +505,17 @@ module.exports = function($window) {
 			vnode.domSize = old.domSize
 		}
 	}
-	function getKeyMap(vnodes, start, end) {
-		var map = Object.create(null)
-		for (; start < end; start++) {
-			var vnode = vnodes[start]
-			if (vnode != null) {
-				var key = vnode.key
-				if (key != null) map[key] = start
-			}
-		}
-		return map
-	}
 	// Lifted from ivi https://github.com/ivijs/ivi/
 	// takes a list of unique numbers (-1 is special and can
 	// occur multiple times) and returns an array with the indices
 	// of the items that are part of the longest increasing
 	// subsequence
-	var lisTemp = []
 	function makeLisIndices(a) {
+		var lisTemp = new Array(a.length)
 		var result = [0]
 		var u = 0, v = 0, i = 0
-		var il = lisTemp.length = a.length
-		for (var i = 0; i < il; i++) lisTemp[i] = a[i]
-		for (var i = 0; i < il; ++i) {
+		for (var i = 0; i < a.length; i++) {
+			lisTemp[i] = a[i]
 			if (a[i] === -1) continue
 			var j = result[result.length - 1]
 			if (a[j] < a[i]) {
@@ -530,9 +526,9 @@ module.exports = function($window) {
 			u = 0
 			v = result.length - 1
 			while (u < v) {
-				// Fast integer average without overflow.
+				// Fast integer average.
 				// eslint-disable-next-line no-bitwise
-				var c = (u >>> 1) + (v >>> 1) + (u & v & 1)
+				var c = (u + v) >>> 1
 				if (a[result[c]] < a[i]) {
 					u = c + 1
 				}
@@ -545,13 +541,10 @@ module.exports = function($window) {
 				result[u] = i
 			}
 		}
-		u = result.length
-		v = result[u - 1]
-		while (u-- > 0) {
-			result[u] = v
-			v = lisTemp[v]
+		v = result[result.length - 1]
+		for (u = result.length - 2; u >= 0; u--) {
+			result[u] = (v = lisTemp[v])
 		}
-		lisTemp.length = 0
 		return result
 	}
 
