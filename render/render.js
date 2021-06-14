@@ -508,11 +508,10 @@ module.exports = function($window) {
 	// of the items that are part of the longest increasing
 	// subsequence
 	function makeLisIndices(a) {
-		var lisTemp = new Array(a.length)
+		var lisTemp = a.slice()
 		var result = [0]
 		var u = 0, v = 0, i = 0
 		for (var i = 0; i < a.length; i++) {
-			lisTemp[i] = a[i]
 			if (a[i] === -1) continue
 			var j = result[result.length - 1]
 			if (a[j] < a[i]) {
