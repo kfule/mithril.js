@@ -150,7 +150,7 @@ module.exports = function($window) {
 			if (sentinel.$$reentrantLock$$ != null) return
 			sentinel.$$reentrantLock$$ = true
 			vnode.state = (vnode.tag.prototype != null && typeof vnode.tag.prototype.view === "function") ? new vnode.tag(vnode) : vnode.tag(vnode)
-			if (vnode.state != null && typeof vnode.state.view !== "function" && typeof vnode.tag === "function") {
+			if (typeof vnode.tag === "function" && typeof vnode.state.view !== "function") {
 				vnode.state = { view: vnode.tag }
 			}
 		}
