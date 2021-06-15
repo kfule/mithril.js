@@ -811,7 +811,7 @@ module.exports = function($window) {
 		return attr === "value" || attr === "checked" || attr === "selectedIndex" || attr === "selected" && vnode.dom === activeElement() || vnode.tag === "option" && vnode.dom.parentNode === activeElement()
 	}
 	function isLifecycleMethod(attr) {
-		return attr === "oninit" || attr === "oncreate" || attr === "onupdate" || attr === "onremove" || attr === "onbeforeremove" || attr === "onbeforeupdate"
+		return /^on(init|create|(before)?(update|remove))$/.test(attr)
 	}
 	function hasPropertyKey(vnode, key, ns) {
 		// Filter out namespaced keys
