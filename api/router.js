@@ -2,7 +2,6 @@
 
 var Vnode = require("../render/vnode")
 var m = require("../render/hyperscript")
-var Promise = require("../promise/promise")
 
 var buildPathname = require("../pathname/build")
 var parsePathname = require("../pathname/parse")
@@ -12,7 +11,7 @@ var censor = require("../util/censor")
 
 var sentinel = {}
 
-module.exports = function($window, mountRedraw) {
+module.exports = function($window, mountRedraw, Promise) {
 	var callAsync = $window == null
 		// In case Mithril's loaded globally without the DOM, let's not break
 		? null
