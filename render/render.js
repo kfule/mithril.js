@@ -635,24 +635,24 @@ module.exports = function($window) {
 				attrsResult = result
 			}
 		}
-		checkState(vnode, original)
 
 		// If we can, try to fast-path it and avoid all the overhead of awaiting
 		if (!mask) {
-			onremove(vnode)
-			removeChild(parent, vnode)
+			reallyRemove()
 		} else {
 			if (stateResult != null) {
 				var next = function () {
 					// eslint-disable-next-line no-bitwise
-					if (mask & 1) { mask &= 2; if (!mask) reallyRemove() }
+					mask &= 2
+					if (!mask) reallyRemove()
 				}
 				stateResult.then(next, next)
 			}
 			if (attrsResult != null) {
 				var next = function () {
 					// eslint-disable-next-line no-bitwise
-					if (mask & 2) { mask &= 1; if (!mask) reallyRemove() }
+					mask &= 1
+					if (!mask) reallyRemove()
 				}
 				attrsResult.then(next, next)
 			}
