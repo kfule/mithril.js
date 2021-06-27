@@ -81,7 +81,7 @@ o.spec("route", function() {
 					root = $window.document.body
 
 					mountRedraw = apiMountRedraw(coreRenderer($window), throttleMock.schedule, console)
-					route = apiRouter($window, mountRedraw)
+					route = apiRouter($window, mountRedraw, Promise)
 					route.prefix = prefix
 					console.error = function() {
 						realError.call(this, new Error("Unexpected `console.error` call"))
@@ -575,7 +575,7 @@ o.spec("route", function() {
 				o("route.Link can render without routes or dom access", function() {
 					$window = browserMock(env)
 					var render = coreRenderer($window)
-					route = apiRouter(null, null)
+					route = apiRouter(null, null, Promise)
 					route.prefix = prefix
 					root = $window.document.body
 
@@ -595,7 +595,7 @@ o.spec("route", function() {
 				o("route.Link keeps magic attributes from being double-called", function() {
 					$window = browserMock(env)
 					var render = coreRenderer($window)
-					route = apiRouter(null, null)
+					route = apiRouter(null, null, Promise)
 					route.prefix = prefix
 					root = $window.document.body
 
@@ -653,7 +653,7 @@ o.spec("route", function() {
 				o("route.Link can render other tag without routes or dom access", function() {
 					$window = browserMock(env)
 					var render = coreRenderer($window)
-					route = apiRouter(null, null)
+					route = apiRouter(null, null, Promise)
 					route.prefix = prefix
 					root = $window.document.body
 
@@ -673,7 +673,7 @@ o.spec("route", function() {
 				o("route.Link can render other selector without routes or dom access", function() {
 					$window = browserMock(env)
 					var render = coreRenderer($window)
-					route = apiRouter(null, null)
+					route = apiRouter(null, null, Promise)
 					route.prefix = prefix
 					root = $window.document.body
 
@@ -693,7 +693,7 @@ o.spec("route", function() {
 				o("route.Link can render not disabled", function() {
 					$window = browserMock(env)
 					var render = coreRenderer($window)
-					route = apiRouter(null, null)
+					route = apiRouter(null, null, Promise)
 					route.prefix = prefix
 					root = $window.document.body
 
@@ -713,7 +713,7 @@ o.spec("route", function() {
 				o("route.Link can render falsy disabled", function() {
 					$window = browserMock(env)
 					var render = coreRenderer($window)
-					route = apiRouter(null, null)
+					route = apiRouter(null, null, Promise)
 					route.prefix = prefix
 					root = $window.document.body
 
@@ -733,7 +733,7 @@ o.spec("route", function() {
 				o("route.Link can render disabled", function() {
 					$window = browserMock(env)
 					var render = coreRenderer($window)
-					route = apiRouter(null, null)
+					route = apiRouter(null, null, Promise)
 					route.prefix = prefix
 					root = $window.document.body
 
@@ -753,7 +753,7 @@ o.spec("route", function() {
 				o("route.Link can render truthy disabled", function() {
 					$window = browserMock(env)
 					var render = coreRenderer($window)
-					route = apiRouter(null, null)
+					route = apiRouter(null, null, Promise)
 					route.prefix = prefix
 					root = $window.document.body
 

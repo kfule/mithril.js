@@ -8,6 +8,7 @@ var throttleMocker = require("../../test-utils/throttleMock")
 var apiMountRedraw = require("../../api/mount-redraw")
 var coreRenderer = require("../../render/render")
 var apiRouter = require("../../api/router")
+var Promise = require("../../promise/promise")
 
 o.spec("route.get/route.set", function() {
 	void [{protocol: "http:", hostname: "localhost"}, {protocol: "file:", hostname: "/"}].forEach(function(env) {
@@ -23,7 +24,7 @@ o.spec("route.get/route.set", function() {
 					root = $window.document.body
 
 					mountRedraw = apiMountRedraw(coreRenderer($window), throttleMock.schedule, console)
-					route = apiRouter($window, mountRedraw)
+					route = apiRouter($window, mountRedraw, Promise)
 					route.prefix = prefix
 				})
 
