@@ -85,7 +85,6 @@ module.exports = function($window) {
 			temp.innerHTML = vnode.children
 		}
 		vnode.dom = temp.firstChild
-		vnode.domSize = temp.childNodes.length
 		// Capture nodes to remove, so we don't confuse them.
 		vnode.instance = []
 		var fragment = $doc.createDocumentFragment()
@@ -103,7 +102,6 @@ module.exports = function($window) {
 			createNodes(fragment, children, 0, children.length, hooks, null, ns)
 		}
 		vnode.dom = fragment.firstChild
-		vnode.domSize = fragment.childNodes.length
 		insertNode(parent, fragment, nextSibling)
 	}
 	function createElement(parent, vnode, hooks, ns, nextSibling) {
@@ -157,10 +155,6 @@ module.exports = function($window) {
 		if (vnode.instance != null) {
 			createNode(parent, vnode.instance, hooks, ns, nextSibling)
 			vnode.dom = vnode.instance.dom
-			vnode.domSize = vnode.dom != null ? vnode.instance.domSize : 0
-		}
-		else {
-			vnode.domSize = 0
 		}
 	}
 
@@ -426,23 +420,20 @@ module.exports = function($window) {
 		}
 		else {
 			vnode.dom = old.dom
-			vnode.domSize = old.domSize
 			vnode.instance = old.instance
 		}
 	}
 	function updateFragment(parent, old, vnode, hooks, nextSibling, ns) {
 		updateNodes(parent, old.children, vnode.children, hooks, nextSibling, ns)
-		var domSize = 0, children = vnode.children
+		var children = vnode.children
 		vnode.dom = null
 		if (children != null) {
 			for (var i = 0; i < children.length; i++) {
 				var child = children[i]
 				if (child != null && child.dom != null) {
 					if (vnode.dom == null) vnode.dom = child.dom
-					domSize += child.domSize || 1
 				}
 			}
-			if (domSize !== 1) vnode.domSize = domSize
 		}
 	}
 	function updateElement(old, vnode, hooks, ns) {
@@ -466,16 +457,13 @@ module.exports = function($window) {
 			if (old.instance == null) createNode(parent, vnode.instance, hooks, ns, nextSibling)
 			else updateNode(parent, old.instance, vnode.instance, hooks, nextSibling, ns)
 			vnode.dom = vnode.instance.dom
-			vnode.domSize = vnode.instance.domSize
 		}
 		else if (old.instance != null) {
 			removeNode(parent, old.instance)
 			vnode.dom = undefined
-			vnode.domSize = 0
 		}
 		else {
 			vnode.dom = old.dom
-			vnode.domSize = old.domSize
 		}
 	}
 	function getKeyMap(vnodes, start, end) {
@@ -931,7 +919,6 @@ module.exports = function($window) {
 			return false
 		} while (false); // eslint-disable-line no-constant-condition
 		vnode.dom = old.dom
-		vnode.domSize = old.domSize
 		vnode.instance = old.instance
 		// One would think having the actual latest attributes would be ideal,
 		// but it doesn't let us properly diff based on our current internal

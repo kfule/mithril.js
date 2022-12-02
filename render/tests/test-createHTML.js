@@ -31,13 +31,11 @@ o.spec("createHTML", function() {
 		render(root, vnode)
 
 		o(vnode.dom).equals(null)
-		o(vnode.domSize).equals(0)
 	})
 	o("handles multiple children in HTML", function() {
 		var vnode = trust("<a></a><b></b>")
 		render(root, vnode)
 
-		o(vnode.domSize).equals(2)
 		o(vnode.dom.nodeName).equals("A")
 		o(vnode.dom.nextSibling.nodeName).equals("B")
 	})
@@ -71,13 +69,11 @@ o.spec("createHTML", function() {
 		render(root, m("svg", vnode))
 
 		o(vnode.dom).equals(null)
-		o(vnode.domSize).equals(0)
 	})
 	o("handles multiple children in SVG", function() {
 		var vnode = trust("<g></g><text></text>")
 		render(root, m("svg", vnode))
 
-		o(vnode.domSize).equals(2)
 		o(vnode.dom.nodeName).equals("g")
 		o(vnode.dom.namespaceURI).equals("http://www.w3.org/2000/svg")
 		o(vnode.dom.nextSibling.nodeName).equals("text")

@@ -25,20 +25,17 @@ o.spec("createFragment", function() {
 		render(root, vnode)
 
 		o(vnode.dom).equals(null)
-		o(vnode.domSize).equals(0)
 	})
 	o("handles childless fragment", function() {
 		var vnode = fragment()
 		render(root, vnode)
 
 		o(vnode.dom).equals(null)
-		o(vnode.domSize).equals(0)
 	})
 	o("handles multiple children", function() {
 		var vnode = fragment(m("a"), m("b"))
 		render(root, vnode)
 
-		o(vnode.domSize).equals(2)
 		o(vnode.dom.nodeName).equals("A")
 		o(vnode.dom.nextSibling.nodeName).equals("B")
 	})

@@ -32,7 +32,6 @@ o.spec("updateFragment", function() {
 		render(root, updated)
 
 		o(updated.dom).equals(root.firstChild)
-		o(updated.domSize).equals(2)
 		o(root.childNodes.length).equals(2)
 		o(root.childNodes[0].nodeName).equals("A")
 		o(root.childNodes[1].nodeName).equals("B")
@@ -45,7 +44,6 @@ o.spec("updateFragment", function() {
 		render(root, updated)
 
 		o(updated.dom).equals(null)
-		o(updated.domSize).equals(0)
 		o(root.childNodes.length).equals(0)
 	})
 	o("updates from childless fragment", function() {

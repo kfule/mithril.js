@@ -22,7 +22,6 @@ o.spec("updateHTML", function() {
 		render(root, updated)
 
 		o(updated.dom).equals(root.firstChild)
-		o(updated.domSize).equals(1)
 		o(updated.dom.nodeValue).equals("b")
 	})
 	o("adds html", function() {
@@ -32,7 +31,6 @@ o.spec("updateHTML", function() {
 		render(root, vnode)
 		render(root, updated)
 
-		o(updated.domSize).equals(2)
 		o(updated.dom).equals(root.firstChild)
 		o(root.childNodes.length).equals(2)
 		o(root.childNodes[0].nodeName).equals("A")
@@ -46,7 +44,6 @@ o.spec("updateHTML", function() {
 		render(root, updated)
 
 		o(updated.dom).equals(null)
-		o(updated.domSize).equals(0)
 		o(root.childNodes.length).equals(0)
 	})
 	function childKeysOf(elem, key) {
