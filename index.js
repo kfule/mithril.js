@@ -1,12 +1,9 @@
 "use strict"
 
-var hyperscript = require("./hyperscript")
+var m = require("./hyperscript")
 var request = require("./request")
 var mountRedraw = require("./mount-redraw")
 
-var m = function m() { return hyperscript.apply(this, arguments) }
-m.m = hyperscript
-m.trust = hyperscript.trust
 m.Fragment = "["
 m.mount = mountRedraw.mount
 m.route = require("./route")
