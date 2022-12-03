@@ -336,9 +336,17 @@ module.exports = function($window) {
 				else {
 					// inspired by ivi https://github.com/ivijs/ivi/ by Boris Kaul
 					var originalNextSibling = nextSibling, vnodesLength = end - start + 1, oldIndices = new Array(vnodesLength), li=0, i=0, pos = 2147483647, matched = 0, map, lisIndices
-					for (i = 0; i < vnodesLength; i++) oldIndices[i] = -1
+
+					map = Object.create(null)
+					for (i = oldStart; i <= oldEnd; i++) {
+						o = old[i]
+						if (o != null) {
+							var key = o.key
+							if (key != null) map[key] = i
+						}
+					}
+
 					for (i = end; i >= start; i--) {
-						if (map == null) map = getKeyMap(old, oldStart, oldEnd + 1)
 						ve = vnodes[i]
 						var oldIndex = map[ve.key]
 						if (oldIndex != null) {
@@ -349,32 +357,32 @@ module.exports = function($window) {
 							if (oe !== ve) updateNode(parent, oe, ve, hooks, nextSibling, ns)
 							if (ve.dom != null) nextSibling = ve.dom
 							matched++
+						} else {
+							oldIndices[i-start] = -1
 						}
 					}
 					nextSibling = originalNextSibling
 					if (matched !== oldEnd - oldStart + 1) removeNodes(parent, old, oldStart, oldEnd + 1)
 					if (matched === 0) createNodes(parent, vnodes, start, end + 1, hooks, nextSibling, ns)
-					else {
-						if (pos === -1) {
-							// the indices of the indices of the items that are part of the
-							// longest increasing subsequence in the oldIndices list
-							lisIndices = makeLisIndices(oldIndices)
-							li = lisIndices.length - 1
-							for (i = end; i >= start; i--) {
-								v = vnodes[i]
-								if (oldIndices[i-start] === -1) createNode(parent, v, hooks, ns, nextSibling)
-								else {
-									if (lisIndices[li] === i - start) li--
-									else moveNodes(parent, v, nextSibling)
-								}
-								if (v.dom != null) nextSibling = vnodes[i].dom
+					else if (pos !== -1) {
+						for (i = end; i >= start; i--) {
+							v = vnodes[i]
+							if (oldIndices[i-start] === -1) createNode(parent, v, hooks, ns, nextSibling)
+							if (v.dom != null) nextSibling = vnodes[i].dom
+						}
+					} else {
+						// the indices of the indices of the items that are part of the
+						// longest increasing subsequence in the oldIndices list
+						lisIndices = makeLisIndices(oldIndices)
+						li = lisIndices.length - 1
+						for (i = end; i >= start; i--) {
+							v = vnodes[i]
+							if (oldIndices[i-start] === -1) createNode(parent, v, hooks, ns, nextSibling)
+							else {
+								if (lisIndices[li] === i - start) li--
+								else moveNodes(parent, v, nextSibling)
 							}
-						} else {
-							for (i = end; i >= start; i--) {
-								v = vnodes[i]
-								if (oldIndices[i-start] === -1) createNode(parent, v, hooks, ns, nextSibling)
-								if (v.dom != null) nextSibling = vnodes[i].dom
-							}
+							if (v.dom != null) nextSibling = vnodes[i].dom
 						}
 					}
 				}
@@ -473,17 +481,6 @@ module.exports = function($window) {
 		else {
 			vnode.dom = old.dom
 		}
-	}
-	function getKeyMap(vnodes, start, end) {
-		var map = Object.create(null)
-		for (; start < end; start++) {
-			var vnode = vnodes[start]
-			if (vnode != null) {
-				var key = vnode.key
-				if (key != null) map[key] = start
-			}
-		}
-		return map
 	}
 	// Lifted from ivi https://github.com/ivijs/ivi/
 	// takes a list of unique numbers (-1 is special and can
