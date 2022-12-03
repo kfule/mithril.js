@@ -137,6 +137,42 @@ o.spec("component", function() {
 					o(root.childNodes.length).equals(1)
 					o(root.firstChild).equals(div.dom)
 				})
+				o("removes inner root content with key", function() {
+					var key = "a"
+					var component = createComponent({
+						view: function() {
+							return m("div", {key}, key)
+						}
+					})
+
+					render(root, m(component))
+					var fc1 = root.firstChild
+					o(root.firstChild.firstChild.nodeValue).equals("a")
+
+					key = "b"
+					render(root, m(component))
+
+					o(fc1).notEquals(root.firstChild)
+					o(root.firstChild.firstChild.nodeValue).equals("b")
+				})
+				o("updates inner root content without key", function() {
+					var key = "a"
+					var component = createComponent({
+						view: function() {
+							return m("div", key)
+						}
+					})
+
+					render(root, m(component))
+					var fc1 = root.firstChild
+					o(root.firstChild.firstChild.nodeValue).equals("a")
+
+					key = "b"
+					render(root, m(component))
+
+					o(fc1).equals(root.firstChild)
+					o(root.firstChild.firstChild.nodeValue).equals("b")
+				})
 				o("svg works when creating across component boundary", function() {
 					var component = createComponent({
 						view: function() {
