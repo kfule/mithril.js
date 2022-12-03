@@ -33,9 +33,9 @@ o.spec("api", function() {
 			o(vnode.children).equals("<br>")
 		})
 	})
-	o.spec("m.fragment", function() {
+	o.spec("m.Fragment", function() {
 		o("works", function() {
-			var vnode = m.fragment({key: 123}, [m("div")])
+			var vnode = m(m.Fragment, {key: 123}, [m("div")])
 
 			o(vnode.tag).equals("[")
 			o(vnode.key).equals(123)
