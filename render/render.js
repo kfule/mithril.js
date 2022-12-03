@@ -382,7 +382,21 @@ module.exports = function($window) {
 		if (oldTag === tag) {
 			vnode.state = old.state
 			vnode.events = old.events
-			if (shouldNotUpdate(vnode, old)) return
+			if (shouldNotUpdate(vnode, old)) {
+				vnode.dom = old.dom
+				vnode.instance = old.instance
+				// One would think having the actual latest attributes would be ideal,
+				// but it doesn't let us properly diff based on our current internal
+				// representation. We have to save not only the old DOM info, but also
+				// the attributes used to create it, as we diff *that*, not against the
+				// DOM directly (with a few exceptions in `setAttr`). And, of course, we
+				// need to save the children and text as they are conceptually not
+				// unlike special "attributes" internally.
+				vnode.attrs = old.attrs
+				vnode.children = old.children
+				vnode.text = old.text
+				return
+			}
 			if (typeof oldTag === "string") {
 				if (vnode.attrs != null) {
 					updateLifecycle(vnode.attrs, vnode, hooks)
@@ -901,30 +915,15 @@ module.exports = function($window) {
 		if (typeof source.onupdate === "function") hooks.push(callHook.bind(source.onupdate, vnode))
 	}
 	function shouldNotUpdate(vnode, old) {
-		do {
-			if (vnode.attrs != null && typeof vnode.attrs.onbeforeupdate === "function") {
-				var force = callHook.call(vnode.attrs.onbeforeupdate, vnode, old)
-				if (force !== undefined && !force) break
-			}
-			if (typeof vnode.tag !== "string" && typeof vnode.state.onbeforeupdate === "function") {
-				var force = callHook.call(vnode.state.onbeforeupdate, vnode, old)
-				if (force !== undefined && !force) break
-			}
-			return false
-		} while (false); // eslint-disable-line no-constant-condition
-		vnode.dom = old.dom
-		vnode.instance = old.instance
-		// One would think having the actual latest attributes would be ideal,
-		// but it doesn't let us properly diff based on our current internal
-		// representation. We have to save not only the old DOM info, but also
-		// the attributes used to create it, as we diff *that*, not against the
-		// DOM directly (with a few exceptions in `setAttr`). And, of course, we
-		// need to save the children and text as they are conceptually not
-		// unlike special "attributes" internally.
-		vnode.attrs = old.attrs
-		vnode.children = old.children
-		vnode.text = old.text
-		return true
+		if (vnode.attrs != null && typeof vnode.attrs.onbeforeupdate === "function") {
+			var force = callHook.call(vnode.attrs.onbeforeupdate, vnode, old)
+			if (force !== undefined && !force) return true
+		}
+		if (typeof vnode.tag !== "string" && typeof vnode.state.onbeforeupdate === "function") {
+			var force = callHook.call(vnode.state.onbeforeupdate, vnode, old)
+			if (force !== undefined && !force) return true
+		}
+		return false
 	}
 
 	var currentDOM
