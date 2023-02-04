@@ -1109,7 +1109,7 @@ var _11 = function(render0, schedule, console) {
 	}
 	return {mount: mount, redraw: redraw}
 }
-var mountRedraw = _11(render, typeof requestAnimationFrame !== "undefined" ? requestAnimationFrame : null, typeof console !== "undefined" ? console : null)
+var mountRedraw = _11(render, requestAnimationFrame, console)
 m.Fragment = "["
 m.mount = mountRedraw.mount
 m.render = render
